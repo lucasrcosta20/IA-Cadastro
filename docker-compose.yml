@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  gerador-descricoes:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: gerador-descricoes-pro
+    ports:
+      - "8000:8000"    # API Flask
+      - "11434:11434"  # Ollama
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./cache:/app/cache
+    environment:
+      - MODE=api
+      - OLLAMA_HOST=0.0.0.0
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Opcional: Nginx para proxy reverso
+  nginx:
+    image: nginx:alpine
+    container_name: gerador-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - gerador-descricoes
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  ollama_data:
+    driver: local
+
+networks:
+  default:
+    name: gerador-network
