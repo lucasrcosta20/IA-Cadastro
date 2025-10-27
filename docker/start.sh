@@ -28,12 +28,7 @@ else
     echo "✅ Modelo já disponível"
 fi
 
-# Verificar se deve iniciar interface gráfica ou API
-if [ "$MODE" = "api" ]; then
-    echo "🌐 Iniciando modo API..."
-    python -m app.api.main
-else
-    echo "🖥️ Iniciando modo interface gráfica..."
-    # Para Docker, geralmente usamos modo headless
-    python -m app.api.main
-fi
+# Iniciar API Flask
+echo "🌐 Iniciando API Flask..."
+cd /app
+python -m app.api.main

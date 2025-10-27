@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # Metadados
-LABEL maintainer="Lucas Costa <lucas@exemplo.com>"
+LABEL maintainer="Lucas Costa"
 LABEL description="Gerador de Descrições Comerciais Pro"
 LABEL version="1.0.0"
 
@@ -9,6 +9,8 @@ LABEL version="1.0.0"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV DEBIAN_FRONTEND=noninteractive
+ENV FLASK_APP=app.api.main
+ENV FLASK_ENV=production
 
 # Diretório de trabalho
 WORKDIR /app
@@ -45,7 +47,7 @@ RUN chmod +x /start.sh
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:11434/api/tags || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
 # Comando padrão
 CMD ["/start.sh"]

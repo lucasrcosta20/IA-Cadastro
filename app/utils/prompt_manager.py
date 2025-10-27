@@ -86,6 +86,25 @@ class PromptManager:
             # Fallback para prompt simples
             return f"Crie uma descrição comercial para o produto: {product.nome}"
     
+    def process_response_for_excel(self, response: str) -> str:
+        """Processa resposta para formato Excel com quebras de linha"""
+        try:
+            # Limpar formatação markdown e caracteres especiais
+            texto = response.replace('\n', ' ').replace('#', '').replace('*', '').replace('---', '')
+            
+            # Adicionar quebras de linha para Excel (formato original)
+            texto = texto.replace('. ', ';<br> - ')
+            
+            # Garantir que comece com " - "
+            if not texto.startswith(' - '):
+                texto = ' - ' + texto
+            
+            return texto
+            
+        except Exception as e:
+            logger.error(f"Erro ao processar resposta: {e}")
+            return response
+    
     def get_prompts(self) -> Tuple[str, str]:
         """Retorna template e system prompt atuais"""
         return self.template, self.system_prompt

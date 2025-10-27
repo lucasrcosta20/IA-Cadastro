@@ -41,9 +41,12 @@ class DescriptionGenerator:
             prompt = self.prompt_manager.format_prompt(product)
             
             # Gerar descrição
-            description = self.ai_client.generate(prompt, self.config)
+            raw_description = self.ai_client.generate(prompt, self.config)
             
-            if description:
+            if raw_description:
+                # Processar para formato Excel com quebras de linha
+                description = self.prompt_manager.process_response_for_excel(raw_description)
+                
                 generation_time = time.time() - start_time
                 result = GenerationResult(
                     product=product,

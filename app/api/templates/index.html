@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Gerador de Descrições Pro - API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #4f46e5;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .status {
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .status-value {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-online {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-offline {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .status-info {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .api-endpoints {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .endpoint {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .endpoint-method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .method-get {
+            background: #10b981;
+            color: white;
+        }
+        
+        .method-post {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .endpoint-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .test-section {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #4338ca;
+        }
+        
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+        
+        .result-success {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        
+        .result-error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Gerador de Descrições Pro</h1>
+            <p>API para geração automática de descrições comerciais</p>
+        </div>
+        
+        <div class="status">
+            <div class="status-item">
+                <span class="status-label">Status da API</span>
+                <span class="status-value status-info" id="apiStatus">Verificando...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Ollama</span>
+                <span class="status-value status-offline" id="ollamaStatus">Offline</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Modelos Instalados</span>
+                <span class="status-value status-info" id="modelsCount">0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Cache</span>
+                <span class="status-value status-info" id="cacheSize">0 itens</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <h2>📡 Endpoints da API</h2>
+                <div class="api-endpoints">
+                    <div class="endpoint">
+                        <div class="endpoint-method method-get">GET</div>
+                        <div class="endpoint-path">/health</div>
+                        <div class="endpoint-desc">Verifica status do sistema e Ollama</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-method method-post">POST</div>
+                        <div class="endpoint-path">/api/test</div>
+                        <div class="endpoint-desc">Testa geração com produto exemplo</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-method method-post">POST</div>
+                        <div class="endpoint-path">/api/generate</div>
+                        <div class="endpoint-desc">Gera descrições para lista de produtos</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-method method-post">POST</div>
+                        <div class="endpoint-path">/api/upload</div>
+                        <div class="endpoint-desc">Upload e processamento de planilha</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-method method-get">GET</div>
+                        <div class="endpoint-path">/api/template</div>
+                        <div class="endpoint-desc">Download template de planilha</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <div class="endpoint-method method-get">GET</div>
+                        <div class="endpoint-path">/api/stats</div>
+                        <div class="endpoint-desc">Estatísticas do sistema</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🧪 Teste Rápido</h2>
+                <div class="test-section">
+                    <p>Teste a geração de descrição com um produto exemplo:</p>
+                    <button class="btn" onclick="testGeneration()" id="testBtn">🚀 Testar Geração</button>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Gerando descrição...</p>
+                    </div>
+                    
+                    <div id="testResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar status inicial
+        async function checkStatus() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                
+                document.getElementById('apiStatus').textContent = 'Online';
+                document.getElementById('apiStatus').className = 'status-value status-online';
+                
+                if (data.ollama_available) {
+                    document.getElementById('ollamaStatus').textContent = 'Online';
+                    document.getElementById('ollamaStatus').className = 'status-value status-online';
+                } else {
+                    document.getElementById('ollamaStatus').textContent = 'Offline';
+                    document.getElementById('ollamaStatus').className = 'status-value status-offline';
+                }
+                
+                document.getElementById('modelsCount').textContent = data.models_installed || 0;
+                
+                // Buscar estatísticas
+                const statsResponse = await fetch('/api/stats');
+                const statsData = await statsResponse.json();
+                
+                document.getElementById('cacheSize').textContent = `${statsData.cache_size || 0} itens`;
+                
+            } catch (error) {
+                document.getElementById('apiStatus').textContent = 'Erro';
+                document.getElementById('apiStatus').className = 'status-value status-offline';
+            }
+        }
+        
+        // Testar geração
+        async function testGeneration() {
+            const btn = document.getElementById('testBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('testResult');
+            
+            btn.disabled = true;
+            loading.style.display = 'block';
+            result.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.innerHTML = `<div class="result result-success">✅ Sucesso!
+Tempo: ${data.generation_time?.toFixed(2)}s
+Modelo: ${data.model_used}
+
+Descrição:
+${data.description}</div>`;
+                } else {
+                    result.innerHTML = `<div class="result result-error">❌ Erro: ${data.error}</div>`;
+                }
+                
+            } catch (error) {
+                result.innerHTML = `<div class="result result-error">❌ Erro de conexão: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+        
+        // Verificar status ao carregar
+        checkStatus();
+        
+        // Atualizar status a cada 30 segundos
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>

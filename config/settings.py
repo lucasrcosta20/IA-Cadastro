@@ -87,9 +87,9 @@ LOGGING_CONFIG = {
 
 # Prompt padrão
 DEFAULT_PROMPT_TEMPLATE = """Crie uma descrição comercial envolvente para o produto abaixo.
-Use apenas as informações fornecidas: Nome, Material, Cor, Descrição do Fornecedor, Categoria 1 e Categoria 2.
+Use apenas as informações de Nome, Material, Cor, Descrição do Fornecedor, Categoria 1 e Categoria 2.
 Não coloque títulos, listas, cabeçalhos ou markdown.
-Não invente medidas, dimensões ou características não mencionadas.
+Não invente medidas ou dimensões.
 O texto deve ser corrido e persuasivo para venda online.
 
 Nome: {nome}
@@ -97,9 +97,7 @@ Material: {material}
 Cor: {cor}
 Descrição do Fornecedor: {descricao_fornecedor}
 Categoria 1: {categoria1}
-Categoria 2: {categoria2}
-
-Descrição comercial:"""
+Categoria 2: {categoria2}"""
 
 DEFAULT_SYSTEM_PROMPT = "Você é um especialista em descrições comerciais para e-commerce. Crie textos persuasivos e profissionais."
 
