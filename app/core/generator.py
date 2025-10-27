@@ -12,7 +12,7 @@ from .models import Product, GenerationResult, GenerationConfig
 from .ai_client import AIClient
 from .cache import CacheManager
 from .logger import get_logger
-from ..utils.prompt_manager import PromptManager
+from app.utils.prompt_manager import PromptManager
 
 logger = get_logger(__name__)
 

@@ -8,7 +8,7 @@ from typing import Dict, Tuple
 
 from ..core.models import Product
 from ..core.logger import get_logger
-from ...config.settings import DATA_DIR, DEFAULT_PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT
+from config.settings import DATA_DIR, DEFAULT_PROMPT_TEMPLATE, DEFAULT_SYSTEM_PROMPT
 
 logger = get_logger(__name__)
 

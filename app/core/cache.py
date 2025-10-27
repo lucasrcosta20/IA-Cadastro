@@ -10,7 +10,7 @@ from typing import Optional, Dict, Any
 
 from .models import Product, GenerationResult
 from .logger import get_logger
-from ...config.settings import CACHE_DIR, GENERATION_CONFIG
+from config.settings import CACHE_DIR, GENERATION_CONFIG
 
 logger = get_logger(__name__)
 
